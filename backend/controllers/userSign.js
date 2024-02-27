@@ -5,22 +5,12 @@ const { JWT_SECRET } = require("../config");
 const userLogin = async (req, res) => {
   const { body } = req;
   const user = await User.findOne({
-    username: req.body.username,
-    password: req.body.password,
+    username: body.username,
+    password: body.password,
   });
 
-  if (user) {
-    const token = jwt.sign(
-      {
-        userId: user._id,
-      },
-      JWT_SECRET
-    );
-
-    res.json({
-      token: token,
-    });
-    return;
+  if (!user) {
+    res.json("Incorrect Username/password");
   }
 
   res.json("user Logged In");
