@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+
+const product = require("./models/products")
 require("dotenv").config(); // Load environment variables from .env file
 const mongodbURI = process.env.MONGODB_URI;
 mongoose.connect(mongodbURI);
@@ -26,4 +28,5 @@ const User = mongoose.model("user", userSchema);
 
 module.exports = {
   User,
+  product
 };
