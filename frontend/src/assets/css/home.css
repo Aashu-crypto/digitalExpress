@@ -1,0 +1,22 @@
+.rightMenu{
+    border-right: 1px solid gainsboro;
+
+}
+
+.rightMenuItem{
+    padding-top:1.5rem;
+
+}
+
+.banner{
+    background-color: black;
+    color:white;
+    margin-top:2rem;
+}
+.today{
+    margin-top: 80px;
+}
+
+.banner img{
+    max-height:230px
+}
