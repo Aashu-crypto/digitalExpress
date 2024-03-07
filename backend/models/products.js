@@ -31,21 +31,12 @@ const productSchema = new Schema({
   },
   categories: {
     type: [String], // Array for multiple categories
-    enum: ["Electronics", "Apparel", "Homeware", "Other"], // Limit to specific categories
+    // enum: ["Electronics", "Apparel", "Homeware", "Other"], // Limit to specific categories
   },
   imageUrl: {
     type: String,
-    validate: {
-      validator: (url) => validator.isURL(url), // Example using 'validator' library for URL validation
-      message: "Please provide a valid image URL",
-    },
+   
   },
-  reviews: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Review", // Reference to a separate 'Review' model if you have one
-    },
-  ],
 });
 
 const product = mongoose.model("Product", productSchema);

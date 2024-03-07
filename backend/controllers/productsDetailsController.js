@@ -1,11 +1,12 @@
 const { product } = require("../db"); // Import your product model
 const validator = require("validator");
+const multer = require("multer");
 
 // Controller for fetching all products
 const productsDetailsController = async (req, res) => {
   try {
     const products = await product.find(); // Fetch all products from the database
-    res.json({products}); // Send products as JSON response
+    res.json({ products }); // Send products as JSON response
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to fetch products" }); // Handle database errors
