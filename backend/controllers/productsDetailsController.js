@@ -1,4 +1,4 @@
-const { product } = require("../db"); // Import your product model
+const { product, User, cart } = require("../db"); // Import your product model
 const validator = require("validator");
 const multer = require("multer");
 
@@ -96,8 +96,41 @@ const productsEdit = async (req, res) => {
   }
 };
 
+const getProductController = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const productItem = await product.findById(id);
+    if (!productItem) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+    res.json(productItem);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Failed" });
+  }
+};
+
+const addTocart = async (req, res) => {
+  try {
+    const { userId, productId, quantity } = req.body;
+    const user = User.findById(userId);
+    if (!user) {
+      return res.status(500).json({ error: "No user Found" });
+    }
+    const addCart = new cart({
+      userId: userId,
+  
+      quantity: quantity,
+    });
+
+    const savedProduct = await addCart.save();
+    res.json(savedProduct);
+  } catch (error) {}
+};
 module.exports = {
   productsDetailsController,
   productsController,
   productsEdit,
+  getProductController,
+  addTocart,
 };
