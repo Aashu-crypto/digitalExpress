@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState,useEffect } from 'react'
-import {backendHost} from '../components/ApiConfig'
+import {backendHost} from '../ApiConfig'
 
 
 
@@ -21,7 +21,7 @@ const Todays = () => {
   
   return (
     <div>
-      
+      Today's Featured
     </div>
   )
 }

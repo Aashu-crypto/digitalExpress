@@ -5,7 +5,7 @@ import Container from 'react-bootstrap/esm/Container';
 import '../../assets/css/home.css'
 import banner from '../../assets/img/banner.svg'
 import bannerFull from '../../assets/img/bannerFull.svg'
-import Todays from '../Todays';
+import Todays from './Todays';
 
 const LandingPage = () => {
   return (
