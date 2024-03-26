@@ -1,4 +1,4 @@
-const { product, User, cart } = require("../db"); // Import your product model
+const { product, User, cart} = require("../db"); // Import your product model
 const validator = require("validator");
 const multer = require("multer");
 
@@ -117,15 +117,34 @@ const addTocart = async (req, res) => {
     if (!user) {
       return res.status(500).json({ error: "No user Found" });
     }
-    const addCart = new cart({
-      userId: userId,
-  
-      quantity: quantity,
-    });
-
-    const savedProduct = await addCart.save();
-    res.json(savedProduct);
-  } catch (error) {}
+    const cartItem = await cart.find({ userId });
+    if (cartItem) {
+      const itemIndex = cartItem.item.findIndex(
+        (p) => p.productId.toString() == productId
+      );
+      if (itemIndex > -1) {
+        // Increase existing quantity
+        let productItem = cartItem.item[itemIndex];
+        productItem.quantity += quantity;
+        cart = await cartItem.save();
+      } else {
+        // Add new item
+        cartItem.item.push({ productId, quantity });
+        cart = await cartItem.save();
+      }
+      return res.status(200).json(cart);
+    } else {
+      // New cart
+      const newCart = await cart.create({
+        userId,
+        item: [{ productId, quantity }],
+      });
+      return res.status(201).json(newCart);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Failed to add to cart" });
+  }
 };
 module.exports = {
   productsDetailsController,
