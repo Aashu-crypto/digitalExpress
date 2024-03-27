@@ -10,10 +10,13 @@ const cartSchema = new Schema({
         ref: "product",
         required: true,
       },
+      name: String,
+      price: Number,
+
       quantity: { type: Number, default: 1 },
     },
   ],
 });
 
-const cartItems = mongoose.model("CartItems", cartSchema);
-module.exports = cartItems;
+const cart = mongoose.model("CartItems", cartSchema);
+module.exports = cart;

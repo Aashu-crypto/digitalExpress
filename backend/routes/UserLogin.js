@@ -6,4 +6,5 @@ router.post("/login", authMiddleware, userController.userLogin);
 router.get("/userInfo",userController.userInfo)
 router.post("/createUser", userController.userCreate);
 
+
 module.exports = router;

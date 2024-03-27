@@ -113,14 +113,18 @@ const getProductController = async (req, res) => {
 const addTocart = async (req, res) => {
   try {
     const { userId, productId, quantity } = req.body;
-    const user = User.findById(userId);
+    const user =await  User.findById(userId);
+    const productDetail = await product.findById(productId);
+    const name = productDetail.name;
+    const price = productDetail.price;
+    console.log("product",name+price);
+
     let cartsaved;
     if (!user) {
       return res.status(500).json({ error: "No user Found" });
     }
     const cartItem = await cart.findOne({
       userId,
-      "item.productId": productId,
     });
     console.log(cartItem);
     if (cartItem) {
@@ -134,7 +138,7 @@ const addTocart = async (req, res) => {
         cartsaved = await cartItem.save();
       } else {
         // Add new item
-        cartItem.item.push({ productId, quantity });
+        cartItem.item.push({ productId, quantity, name, price });
         cartsaved = await cartItem.save();
       }
       return res.status(200).json(cartsaved);
@@ -142,7 +146,7 @@ const addTocart = async (req, res) => {
       // New cart
       const newCart = await cart.create({
         userId,
-        item: [{ productId, quantity }],
+        item: [{ productId, quantity, name, price }],
       });
       return res.status(201).json(newCart);
     }
@@ -156,7 +160,7 @@ const getCartItems = async (req, res) => {
   try {
     const { id } = req.params;
     console.log(id);
-    const user = User.findById(id);
+    const user = await User.findById(id);
     console.log(user);
 
     const cartItems = await cart.find({ userId: id });
@@ -170,14 +174,16 @@ const getCartItems = async (req, res) => {
 };
 const deleteCartItem = async (req, res) => {
   const { userId, productId } = req.body;
+  console.log(userId + productId);
   try {
-    const cartItem = cart.findOne({
-      userId,
-      "item.productId": productId,
-    });
-    console.log("deleted Item",cartItem)
+    const Cart = await cart.findOneAndUpdate(
+      { userId }, // Find the correct cart
+      { $pull: { item: { productId } } }, // Remove the item
+      { new: true } // Return the updated document
+    );
+    console.log("deleted Item", Cart);
 
-    return res.status(200).json({ sucess: "Deleted Succesfully" });
+    return res.status(200).json({ sucess: Cart });
   } catch (error) {
     return res.status(500).json({ error: error });
   }
