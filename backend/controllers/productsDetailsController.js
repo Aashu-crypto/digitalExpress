@@ -1,4 +1,4 @@
-const { product, User, cart} = require("../db"); // Import your product model
+const { product, User, cart } = require("../db"); // Import your product model
 const validator = require("validator");
 const multer = require("multer");
 
@@ -114,10 +114,15 @@ const addTocart = async (req, res) => {
   try {
     const { userId, productId, quantity } = req.body;
     const user = User.findById(userId);
+    let cartsaved;
     if (!user) {
       return res.status(500).json({ error: "No user Found" });
     }
-    const cartItem = await cart.find({ userId });
+    const cartItem = await cart.findOne({
+      userId,
+      "item.productId": productId,
+    });
+    console.log(cartItem);
     if (cartItem) {
       const itemIndex = cartItem.item.findIndex(
         (p) => p.productId.toString() == productId
@@ -125,14 +130,14 @@ const addTocart = async (req, res) => {
       if (itemIndex > -1) {
         // Increase existing quantity
         let productItem = cartItem.item[itemIndex];
-        productItem.quantity += quantity;
-        cart = await cartItem.save();
+        productItem.quantity += Number(quantity);
+        cartsaved = await cartItem.save();
       } else {
         // Add new item
         cartItem.item.push({ productId, quantity });
-        cart = await cartItem.save();
+        cartsaved = await cartItem.save();
       }
-      return res.status(200).json(cart);
+      return res.status(200).json(cartsaved);
     } else {
       // New cart
       const newCart = await cart.create({
@@ -146,10 +151,43 @@ const addTocart = async (req, res) => {
     res.status(500).json({ error: "Failed to add to cart" });
   }
 };
+
+const getCartItems = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(id);
+    const user = User.findById(id);
+    console.log(user);
+
+    const cartItems = await cart.find({ userId: id });
+    console.log(cartItems);
+
+    return res.status(200).json(cartItems);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Some Error " });
+  }
+};
+const deleteCartItem = async (req, res) => {
+  const { userId, productId } = req.body;
+  try {
+    const cartItem = cart.findOne({
+      userId,
+      "item.productId": productId,
+    });
+    console.log("deleted Item",cartItem)
+
+    return res.status(200).json({ sucess: "Deleted Succesfully" });
+  } catch (error) {
+    return res.status(500).json({ error: error });
+  }
+};
 module.exports = {
   productsDetailsController,
   productsController,
   productsEdit,
   getProductController,
   addTocart,
+  getCartItems,
+  deleteCartItem,
 };
